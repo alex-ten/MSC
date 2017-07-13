@@ -1,5 +1,5 @@
 import numpy as np
-from RNN.reader import enqueuer, get_vocab, Vocab
+from reader import enqueuer, get_vocab, Vocab
 
 class InputData(object):
     """The input data."""
