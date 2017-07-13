@@ -190,7 +190,7 @@ def enqueuer(raw_data, batch_size, num_steps, name=None):
 
 # main scripts
 def reader_demo():
-    file = PDPATH('/RNN/test_data/ptb_word_data/test.txt')
+    file = PDPATH('/test_data/ptb_word_data/test.txt')
     print('Step 1. Convert raw corpus into a long list:')
     print(_read_words(file))
 
@@ -210,10 +210,10 @@ def vocab_demo():
         print(i, v.getid(i))
 
 def make_vocab():
-    file = PDPATH('/RNN/train_data/tiny_data/train.txt')
+    file = PDPATH('/train_data/tiny_data/train.txt')
     s2id = _build_vocab(file)
     V = Vocab(s2id)
-    pickle.dump(V, open(PDPATH('/RNN/vocabs/tiny.voc'), 'wb'))
+    pickle.dump(V, open(PDPATH('/vocabs/tiny.voc'), 'wb'))
 
 
 def sandbox():
@@ -223,7 +223,7 @@ def sandbox():
         # Stores tallies of unique words in data, e.g. {''<unk>': 4794, 'the': 4529, '<eos>': 3761}
         counter = collections.Counter(data)
         return counter
-    file = PDPATH('/RNN/train_data/ptb_word_data/train.txt')
+    file = PDPATH('/train_data/ptb_word_data/train.txt')
     d=f(file)
 
     items = ['the', 'dog', 'dogs', 'boy', 'boys', 'is', 'are', 'has', 'have', 'was', 'were']
