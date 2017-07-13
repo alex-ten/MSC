@@ -97,7 +97,7 @@ def get_vocab(filename):
 def _read_words(filename):
   with tf.gfile.GFile(filename, "r") as f:
     # Return a long list of word sequences with <eos> in-between individual sentences
-    return f.read().decode('utf-8').replace("\n", "<eos>").split()
+    return f.read().replace("\n", "<eos>").split()
 
 
 def _build_vocab(filename, sorted_words_only=False):
