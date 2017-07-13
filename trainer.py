@@ -7,11 +7,11 @@ import pickle
 import numpy as np
 import tensorflow as tf
 
-from RNN.classes.RNN_Models import Basic_LSTM_Model, Basic_RNN_Model
-from RNN.classes.Data import InputData
-from RNN.classes.Logger import Logger
-from RNN.classes.Configs import Configs
-from RNN import reader
+from classes.RNN_Models import Basic_LSTM_Model, Basic_RNN_Model
+from classes.Data import InputData
+from classes.Logger import Logger
+from classes.Configs import Configs
+import reader
 
 from utilities.printProgress import printProgress
 from utilities.save_plot import save_plot
