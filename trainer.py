@@ -127,7 +127,7 @@ def main(_):
     eval_config.batch_size = 1
     eval_config.num_steps = 1
 
-    if FLAGS.train_data: path = PDPATH('/RNN/train_data/'+FLAGS.train_data)
+    if FLAGS.train_data: path = PDPATH('/train_data/'+FLAGS.train_data)
     else:
         print('Provide path to training data, e.g: train.py --train_data=\'path\'')
         return
