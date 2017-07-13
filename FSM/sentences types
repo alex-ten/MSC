@@ -1,0 +1,26 @@
+Simple:
+ det N V
+
+Simple + adj (A*):
+ det (A*) N V
+
+Simple + PP {P (det) N}:
+ det N# {P (det) N'} V#
+
+Embedded:
+1) det N# [PN V#] V#
+2) det N# [PN V# (det) N] V#
+3) det N# [PN (det) N' V'] V#
+
+Embedded + adj:
+1) det (A*) N# [PN V#] V#
+2) det (A*) N# [PN V# (det) (A*) N'] V#
+3) det (A*) N# [PN (det) (A*) N' V'] V#
+
+Embedded + PP:
+1.1) det N# {P (det) N'} [PN V#] V#
+1.2) det N# {P (det) N'} [PN V'] V#
+2.1) det N# {P (det) N'} [PN V# (det) N] V#
+2.2) det N# {P (det) N'} [PN V' (det) N] V#
+3.1) det N# {P (det) N'} [PN (det) N" V"] V#
+3.2) det N# {P (det) N'} [PN (det) N" V"] V'
