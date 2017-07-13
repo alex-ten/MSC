@@ -10,12 +10,12 @@ import matplotlib.pyplot as plt
 
 from PDPATH import PDPATH
 
-from RNN.classes.RNN_Models import Basic_LSTM_Model, Basic_RNN_Model
-from RNN.classes.Configs import Configs
-from RNN.reader import Vocab
-from RNN.classes.Data import TestData
-from RNN import reader
-from RNN.trainer import run_epoch
+from classes.RNN_Models import Basic_LSTM_Model, Basic_RNN_Model
+from classes.Configs import Configs
+from reader import Vocab
+from classes.Data import TestData
+import reader
+from trainer import run_epoch
 
 flags = tf.flags
 logging = tf.logging
