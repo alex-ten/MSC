@@ -69,8 +69,8 @@ def run_test(session, model, model_input):
 
 def main(_):
     vocab = reader.get_vocab(FLAGS.vocab)
-    test_ids, test_meta = reader.make_test(PDPATH('/RNN/test_data/'+FLAGS.test), vocab)
-    model_path = PDPATH('/RNN/trained_models/') + FLAGS.model
+    test_ids, test_meta = reader.make_test(PDPATH('/test_data/'+FLAGS.test), vocab)
+    model_path = PDPATH('/trained_models/') + FLAGS.model
     config = load_configs(model_path)
 
 

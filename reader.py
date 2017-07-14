@@ -88,7 +88,7 @@ def make_test(filename, vocab):
 
 def get_vocab(filename):
     # unpickle Vocab
-    f = PDPATH('/RNN/vocabs/{}'.format(filename))
+    f = PDPATH('/vocabs/{}'.format(filename))
     v = pickle.load(open(f, 'rb'))
     return v
 

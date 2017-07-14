@@ -1,4 +1,5 @@
 import tensorflow as tf
+import inspect
 
 def data_type():
   return tf.float32
@@ -16,22 +17,38 @@ class Basic_LSTM_Model(object):
     vocab_size = config.vocab_size
 
     # LSTM =====================================================================================
-    lstm_cell = tf.contrib.rnn.BasicLSTMCell(size, forget_bias=0.0, state_is_tuple=True)
+    def lstm_cell():
+        # With the latest TensorFlow source code (as of Mar 27, 2017),
+        # the BasicLSTMCell will need a reuse parameter which is unfortunately not
+        # defined in TensorFlow 1.0. To maintain backwards compatibility, we add
+        # an argument check here:
+        if 'reuse' in inspect.getargspec(
+                tf.contrib.rnn.BasicLSTMCell.__init__).args:
+            return tf.contrib.rnn.BasicLSTMCell(
+                size, forget_bias=0.0, state_is_tuple=True,
+                reuse=tf.get_variable_scope().reuse)
+        else:
+            return tf.contrib.rnn.BasicLSTMCell(
+                size, forget_bias=0.0, state_is_tuple=True)
 
+    attn_cell = lstm_cell
     if is_training and config.keep_prob < 1:
-      lstm_cell = tf.contrib.rnn.DropoutWrapper(
-          lstm_cell, output_keep_prob=config.keep_prob)
-    cell = tf.contrib.rnn.MultiRNNCell([lstm_cell] * config.num_layers, state_is_tuple=True)
+        def attn_cell():
+            return tf.contrib.rnn.DropoutWrapper(
+                lstm_cell(), output_keep_prob=config.keep_prob)
+    cell = tf.contrib.rnn.MultiRNNCell(
+        [attn_cell() for _ in range(config.num_layers)], state_is_tuple=True)
     # ===================================================================================== LSTM
 
     self._initial_state = cell.zero_state(batch_size, data_type())
 
     with tf.device("/cpu:0"):
-      embedding = tf.get_variable("embedding", [vocab_size, size], dtype=data_type())
-      inputs = tf.nn.embedding_lookup(embedding, input_.input_data)
+        embedding = tf.get_variable(
+            "embedding", [vocab_size, size], dtype=data_type())
+        inputs = tf.nn.embedding_lookup(embedding, input_.input_data)
 
     if is_training and config.keep_prob < 1:
-      inputs = tf.nn.dropout(inputs, config.keep_prob)
+        inputs = tf.nn.dropout(inputs, config.keep_prob)
 
     # Simplified version of tensorflow.models.rnn.rnn.py's rnn().
     # This builds an unrolled LSTM for tutorial purposes only.

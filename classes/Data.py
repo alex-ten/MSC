@@ -35,14 +35,14 @@ class TestData(object):
         self.targets = test_targ
 
 def main():
-    import RNN.reader as reader
-    from RNN.trainer import TinyConfigs
+    import reader as reader
+    from trainer import Configs
     from PDPATH import PDPATH
 
     ptb_vocab = get_vocab('ptb.voc')
     raw_test_data = reader.make_test(PDPATH('/RNN/test_data/coffee.txt'), ptb_vocab)
 
-    test_input = TestData(config=TinyConfigs(),
+    test_input = TestData(config=Configs(),
                           test_data=raw_test_data,
                           vocab=ptb_vocab,
                           name="TestInput")
