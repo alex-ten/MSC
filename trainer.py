@@ -112,19 +112,19 @@ def run_epoch(session, model, eval_op=None, verbose=False):
 
 def main(_):
 
-    config = Configs(batch_size = 1,
-                    hidden_size = 15,
-                    init_scale = 0.04,
-                    keep_prob = 1.0,
-                    learning_rate = 0.1,
+    config = Configs(batch_size = 20,
+                    hidden_size = 1500,
+                    init_scale = 0.05,
+                    keep_prob = .35,
+                    learning_rate = 1.0,
                     lr_decay = 1/1.15,
-                    max_epoch = 10,
+                    max_epoch = 14,
                     max_grad_norm = 10,
-                    max_max_epoch = 2000,
+                    max_max_epoch = 55,
                     model = 'LSTM',      # Set of available models: 'LSTM', 'RNN', 'SRN'
-                    num_layers = 2,
-                    num_steps = 3,
-                    vocab_size = 8)
+                    num_layers = 1,
+                    num_steps = 35,
+                    vocab_size = 10000)
     eval_config = config.clone()
     eval_config.batch_size = 1
     eval_config.num_steps = 1
@@ -195,9 +195,10 @@ def main(_):
                 train_perplexity, _ = run_epoch(session, m, eval_op=m.train_op)
                 train_log.append(train_perplexity)
 
-                output_frequency = 200
+                output_density = 10
+                output_frequency = config.max_max_epoch // output_density
                 if config.max_max_epoch >= output_frequency:
-                    if (i % (config.max_max_epoch // output_frequency) == 0) or i==config.max_max_epoch-1:
+                    if (i % output_frequency == 0) or i==config.max_max_epoch-1:
                         print_(i, train_perplexity, valid_perplexity)
                 else:
                     print_(i, train_perplexity, valid_perplexity)
@@ -210,7 +211,7 @@ def main(_):
 
             test_perplexity, outputs = run_epoch(session, mtest)
             print('\nStopped training on epoch {}:'.format(fin))
-            print("    Train PPL = {:.4f}\n    Valid PPL = {:.4f}\n    Test  PPL  = {:.4f}".format(
+            print("    Train PPL = {:.4f}\n    Valid PPL = {:.4f}\n    Test PPL  = {:.4f}".format(
                 train_perplexity,
                 valid_perplexity,
                 test_perplexity)
@@ -218,7 +219,7 @@ def main(_):
             print('    Stopped {} (GMT)'.format(str(datetime.datetime.today())))
             m, s = divmod(elapsed, 60)
             h, m = divmod(m, 60)
-            print('    Elapsed time {}:{}:{:.2f}'.format(round(h),round(m),round(s)))
+            print('    Elapsed time {}:{}:{}'.format(int(h),int(m),int(s)))
 
 
             if FLAGS.save_as:

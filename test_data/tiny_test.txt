@@ -1,9 +1,9 @@
-A     % <eos>, A, B, C, E, D, F, G
-D     % <eos>, A, B, C, E, D, F, G
-A B   % <eos>, A, B, C, E, D, F, G
-A F   % <eos>, A, B, C, E, D, F, G
-D B   % <eos>, A, B, C, E, D, F, G
-D G   % <eos>, A, B, C, E, D, F, G
+A     % B, F
+D     % B, G
+A B   % C, A, B, E, D, F, G
+A F   % C, A, B, E, D, F, G
+D B   % E, A, B, C, D, F, G
+D G   % A, E, B, C, D, F, G
 A B C % <eos>, A, B, C, E, D, F, G
 A F C % <eos>, A, B, C, E, D, F, G
 D B E % <eos>, A, B, C, E, D, F, G
