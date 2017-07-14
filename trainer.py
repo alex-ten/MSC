@@ -2,20 +2,22 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import time
 import pickle
+import datetime
+import time
+
 import numpy as np
 import tensorflow as tf
 
-from classes.RNN_Models import Basic_LSTM_Model, Basic_RNN_Model
+import reader
+from PDPATH import PDPATH
+from classes.Configs import Configs
 from classes.Data import InputData
 from classes.Logger import Logger
-from classes.Configs import Configs
-import reader
-
+from classes.RNN_Models import Basic_LSTM_Model, Basic_RNN_Model
 from utilities.printProgress import printProgress
 from utilities.save_plot import save_plot
-from PDPATH import PDPATH
+from utilities.banner import banner
 
 flags = tf.flags
 logging = tf.logging
@@ -30,7 +32,7 @@ FLAGS = flags.FLAGS
 
 
 def print_(i,t,v):
-    print("Epoch: {}    Train perplexity = {}   Validation perplexity: {}".format(i,t,v))
+    print("Epoch {:4d}:   Train PPL = {:.4f}   Valid PPL: {:.4f}".format(i,t,v))
 
 
 def get_config():
@@ -110,19 +112,19 @@ def run_epoch(session, model, eval_op=None, verbose=False):
 
 def main(_):
 
-    config = Configs(batch_size = 20,
-                    hidden_size = 1500,
+    config = Configs(batch_size = 1,
+                    hidden_size = 15,
                     init_scale = 0.04,
-                    keep_prob = 0.35,
-                    learning_rate = 1.0,
+                    keep_prob = 1.0,
+                    learning_rate = 0.1,
                     lr_decay = 1/1.15,
-                    max_epoch = 14,
+                    max_epoch = 10,
                     max_grad_norm = 10,
-                    max_max_epoch = 55,
+                    max_max_epoch = 2000,
                     model = 'LSTM',      # Set of available models: 'LSTM', 'RNN', 'SRN'
                     num_layers = 2,
-                    num_steps = 35,
-                    vocab_size = 10000)
+                    num_steps = 3,
+                    vocab_size = 8)
     eval_config = config.clone()
     eval_config.batch_size = 1
     eval_config.num_steps = 1
@@ -174,6 +176,9 @@ def main(_):
         sess_config.gpu_options.allow_growth = True
         # Start session context manager by calling to tf.train.Supervisor's managed_session
         with sv.managed_session(config=sess_config) as session:
+            print('Starting on: {} (GMT)'.format(str(datetime.datetime.today())))
+            print(banner(s='begin'))
+            start = time.time()
             if FLAGS.prog: printProgress(0, config.max_max_epoch, 'Training', 'Complete', barLength=60)
             for i in range(config.max_max_epoch):
                 fin = i + 1
@@ -181,6 +186,7 @@ def main(_):
                 valid_log.append(valid_perplexity)
                 if len(valid_log) >= 2:
                     if valid_log[-1] > valid_log[-2]:
+                        elapsed = time.time() - start
                         break
 
                 lr_decay = config.lr_decay ** max(i + 1 - config.max_epoch, 1)
@@ -189,19 +195,31 @@ def main(_):
                 train_perplexity, _ = run_epoch(session, m, eval_op=m.train_op)
                 train_log.append(train_perplexity)
 
-                output_frequency = 5
+                output_frequency = 200
                 if config.max_max_epoch >= output_frequency:
                     if (i % (config.max_max_epoch // output_frequency) == 0) or i==config.max_max_epoch-1:
                         print_(i, train_perplexity, valid_perplexity)
                 else:
                     print_(i, train_perplexity, valid_perplexity)
 
+                if i == config.max_max_epoch-1:
+                    elapsed = time.time() - start
+
                 if FLAGS.prog:
                     printProgress(i+1, config.max_max_epoch, 'Training', 'Complete', barLength=60)
 
             test_perplexity, outputs = run_epoch(session, mtest)
-            print('\nStopped training on epoch {}'.format(fin))
-            print("Test perplexity: {}".format(test_perplexity))
+            print('\nStopped training on epoch {}:'.format(fin))
+            print("    Train PPL = {:.4f}\n    Valid PPL = {:.4f}\n    Test  PPL  = {:.4f}".format(
+                train_perplexity,
+                valid_perplexity,
+                test_perplexity)
+            )
+            print('    Stopped {} (GMT)'.format(str(datetime.datetime.today())))
+            m, s = divmod(elapsed, 60)
+            h, m = divmod(m, 60)
+            print('    Elapsed time {}:{}:{:.2f}'.format(round(h),round(m),round(s)))
+
 
             if FLAGS.save_as:
                 if FLAGS.name:
