@@ -4,8 +4,8 @@ import os
 class Logger():
     def __init__(self, path=''):
         self.sess_index = 0
-        self.logs_path = PDPATH() + '/logs/'
-        self.trained_path = PDPATH() + '/trained_models/'
+        self.logs_path = PDPATH() + '/logs'
+        self.trained_path = PDPATH() + '/trained_models'
         self.may_be_make_dir(self.logs_path)
         self.may_be_make_dir(self.trained_path)
 

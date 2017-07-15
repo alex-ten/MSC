@@ -114,8 +114,8 @@ def main(_):
 
     config = Configs(batch_size = 20,
                     hidden_size = 1500,
-                    init_scale = 0.05,
-                    keep_prob = .35,
+                    init_scale = 0.04,
+                    keep_prob = 1.0,
                     learning_rate = 1.0,
                     lr_decay = 1/1.15,
                     max_epoch = 14,
@@ -142,7 +142,7 @@ def main(_):
     with tf.Graph().as_default():
         initializer = tf.random_uniform_initializer(-config.init_scale,
                                                      config.init_scale,
-                                                     seed = 1)
+                                                     seed = None)
         with tf.name_scope("Train"):
             train_input = InputData(config=config, data=train_data, name="TrainInput")
             with tf.variable_scope("Model", reuse=None, initializer=initializer):
@@ -228,7 +228,7 @@ def main(_):
                 else:
                     save_to = logger.make_child_i(logger.trained_path, 'model')
 
-                spath = save_to +'/'+ FLAGS.save_as
+                spath = save_to + '/' + FLAGS.save_as
                 print("\nSaving model to {}.".format(spath))
                 saver.save(session, spath, global_step=sv.global_step)
                 save_config(config, filename=spath)
