@@ -25,6 +25,7 @@ logging = tf.logging
 flags.DEFINE_string("name", None, "Model name. If none, directories will be named with default names")
 flags.DEFINE_string("train_data", None, "Training data directory (must contain .train, .test, .valid .txt files).")
 flags.DEFINE_string("save_as", None, "Model output directory.")
+flags.DEFINE_string("arch", None, "Model architecture.")
 flags.DEFINE_bool("use_fp16", False, "Train using 16-bit floats instead of 32bit floats")
 flags.DEFINE_bool("prog", False, "Show progress bar in stdout (for interactive usage).")
 
@@ -40,11 +41,11 @@ def get_config():
 
 
 def get_model(cell, is_training, **kwargs):
-    if cell == 'LSTM':
+    if cell == 'lstm':
         return Basic_LSTM_Model(is_training=is_training, config=kwargs['config'], input_=kwargs['input_'])
-    elif cell == 'RNN':
+    elif cell == 'rnn':
         return Basic_RNN_Model(is_training=is_training, config=kwargs['config'], input_=kwargs['input_'], BPTT=True)
-    elif cell == 'SRN':
+    elif cell == 'srn':
         return Basic_RNN_Model(is_training=is_training, config=kwargs['config'], input_=kwargs['input_'], BPTT=False)
     return
 
@@ -115,13 +116,13 @@ def main(_):
     config = Configs(batch_size = 20,
                     hidden_size = 1500,
                     init_scale = 0.04,
-                    keep_prob = 1.0,
+                    keep_prob = .35,
                     learning_rate = 1.0,
                     lr_decay = 1/1.15,
                     max_epoch = 14,
                     max_grad_norm = 10,
                     max_max_epoch = 55,
-                    model = 'LSTM',      # Set of available models: 'LSTM', 'RNN', 'SRN'
+                    model = FLAGS.arch.lower(),      # Set of available models: 'LSTM', 'RNN', 'SRN'
                     num_layers = 1,
                     num_steps = 35,
                     vocab_size = 10000)
@@ -147,6 +148,7 @@ def main(_):
             train_input = InputData(config=config, data=train_data, name="TrainInput")
             with tf.variable_scope("Model", reuse=None, initializer=initializer):
                 m = get_model(config.model, is_training=True, config=config, input_=train_input)
+            print(m)
             tf.summary.scalar("Training Loss", m.cost)
             tf.summary.scalar("Learning Rate", m.lr)
 

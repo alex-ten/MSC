@@ -138,14 +138,29 @@ class Basic_RNN_Model(object):
       size = config.hidden_size
       vocab_size = config.vocab_size
 
-      # SRN / ======================================================================================
-      srn_cell = tf.contrib.rnn.BasicRNNCell(size, None, tf.nn.sigmoid)
+      # RNN ======================================================+===============================
+      def rnn_cell():
+          # With the latest TensorFlow source code (as of Mar 27, 2017),
+          # the BasicLSTMCell will need a reuse parameter which is unfortunately not
+          # defined in TensorFlow 1.0. To maintain backwards compatibility, we add
+          # an argument check here:
+          if 'reuse' in inspect.getargspec(
+                  tf.contrib.rnn.BasicRNNCell.__init__).args:
+              return tf.contrib.rnn.BasicRNNCell(
+                  size, None, tf.nn.sigmoid,
+                  reuse=tf.get_variable_scope().reuse)
+          else:
+              return tf.contrib.rnn.BasicRNNCell(
+                  size, None, tf.nn.sigmoid)
 
+      attn_cell = rnn_cell
       if is_training and config.keep_prob < 1:
-          srn_cell = tf.contrib.rnn.DropoutWrapper(
-              srn_cell, output_keep_prob=config.keep_prob)
-      cell = tf.contrib.rnn.MultiRNNCell([srn_cell] * config.num_layers, state_is_tuple=False)
-      # ====================================================================================== / SRN
+          def attn_cell():
+              return tf.contrib.rnn.DropoutWrapper(
+                  rnn_cell(), output_keep_prob=config.keep_prob)
+      cell = tf.contrib.rnn.MultiRNNCell(
+          [attn_cell() for _ in range(config.num_layers)], state_is_tuple=False)
+      # ====================================================================================== RNN
 
       self._initial_state = cell.zero_state(batch_size, data_type())
 
