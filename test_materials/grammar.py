@@ -26,20 +26,20 @@ class POS(object):
         return tokens[randint(0, len(tokens) - 1)]
 
 
-class Det(POS):
-    def __init__(self, vocab, name, id=None):
+class DT(POS):
+    def __init__(self, vocab, name='det', id=None):
         super().__init__(vocab, name)
         self.id = id
 
 
 class Noun(POS):
-    def __init__(self, vocab, name, gnum=None):
-        super().__init__(vocab, name)
+    def __init__(self, vocab, gnum=None):
+        super().__init__(vocab, name='noun')
         self.feature = gnum
 
 
 class Verb(POS):
-    def __init__(self, vocab, name, gnum=None, argstr=None):
+    def __init__(self, vocab, name='verb', gnum=None, argstr=None):
         super().__init__(vocab, name)
         self.feature = gnum
         self.argstr = argstr
@@ -68,11 +68,15 @@ class PP(Phrase):
 
 
 class NP(Phrase):
-    def __init__(self, det, N):
+    def __init__(self, det, N, PP = None, A = None):
         super().__init__(det, N)
         self.det = det
         self.N = N
         self.gnum = N.feature
+        if PP is not None:
+            self.add_PP(PP)
+        if A is not None:
+            self.add_adj(A)
 
     def add_adj(self, A):
         i = self.structure.index(self.N)
@@ -133,29 +137,48 @@ class SimpleSentence(object):
 # MAINs
 # ============================
 def main():
-    det  = Det(voc('det.txt'), 'det')
+    anim  = voc('noun_anim.txt')
+    inanim = voc('noun_inanim.txt')
+    vreq  = voc('verb_dor.txt')
+    vopt  = voc('verb_doo.txt')
+    vpreq = voc('verb_dop.txt')
+
+    det  = DT(voc('det.txt'))
     prep = POS(voc('prep.txt'), 'prep')
     A    = POS(voc('adj.txt'), 'adj')
 
 
-    NP0 = NP(det = det,
-             N = Noun(voc('noun_anim.txt'), 'noun', gnum=1))
-    VP1 = VP(Verb(voc('verb_dor.txt'), 'verb', gnum=1),
-             NP0)
-    PP_ = PP(P = prep,
-             NP = NP(
-                 det = det,
-                 N = Noun(voc('noun_anim.txt'), 'noun', gnum=1)))
+    aNP0 = NP(det = det, N = Noun(anim, gnum=0))
+    aNP1 = NP(det = det, N = Noun(anim, gnum=1))
 
-    SS = SimpleSentence(NP0, VP1).add_RC(
-        RC = RC(
-            PN = POS(voc('pron.txt'), 'pronoun'),
-            V = Verb(voc('verb_dor.txt'), 'verb', gnum=1, argstr=1),
-            NP = NP0
-        )
-    )
+    VP0n0 = VP(Verb(vreq, 'verb', gnum=0), aNP0)
+    VP0n1 = VP(Verb(vreq, 'verb', gnum=0), aNP1)
 
-    for i in range(10):
-       print(SS.express())
+    VP1 = VP(Verb(vreq, 'verb', gnum=1), aNP0)
+
+    PP0 = PP(P = prep, NP = NP(det = det, N = Noun(anim, gnum=0)))
+    PP1 = PP(P = prep, NP = NP(det = det, N = Noun(anim, gnum=1)))
+
+
+    NP0_PP0 = NP(det=det, N=Noun(anim, gnum=0), PP=PP0)
+    NP0_PP1 = NP(det=det, N=Noun(anim, gnum=0), PP=PP1)
+    NP1_PP0 = NP(det=det, N=Noun(anim, gnum=1), PP=PP0)
+    NP1_PP1 = NP(det=det, N=Noun(anim, gnum=1), PP=PP1)
+
+
+    # SS = SimpleSentence(NP0_PP0, VP1).add_RC(
+    #     RC = RC(
+    #         PN = POS(voc('pron.txt'), 'pronoun'),
+    #         V = Verb(voc('verb_dor.txt'), 'verb', gnum=1, argstr=1),
+    #         NP = NP0
+    #     )
+    # )
+
+    simple00 = SimpleSentence(NP = NP0, VP = VP0)
+    simple01 = SimpleSentence(NP = NP0, VP = VP1)
+    simple10 = SimpleSentence(NP = NP1, VP = VP0)
+    simple11 = SimpleSentence(NP = NP1, VP = VP1)
+
+
 
 if __name__=='__main__': main()
