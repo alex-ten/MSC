@@ -1,27 +1,27 @@
 Simple:
- det N V
+[√] det N V
 
-Simple + adj (A*):
- det (A*) N V
+Simple + A (A*):
+[ ] det (A*) N V
 
 Simple + PP {P (det) N}:
- det N# {P (det) N'} V#
+[ ] 1) det N# {P (det) N#} V#
+[ ] 2) det N# {P (det) N'} V#
 
-Embedded:
-1) det N# [PN V#] V#
-2) det N# [PN V# (det) N] V#
-3) det N# [PN (det) N' V'] V#
+Simple + RC [PN V# | PN V# (det) N | PN (det) N' V']:
+[ ] 1) det N# [PN V#] V#
+[ ] 2) det N# [PN V# (det) N] V#
+[ ] 3) det n# [PN (det) N' V'] V#
 
 Embedded + adj:
-1) det (A*) N# [PN V#] V#
-2) det (A*) N# [PN V# (det) (A*) N'] V#
-3) det (A*) N# [PN (det) (A*) N' V'] V#
+[ ] 1) det (A*) N# [PN V#] V#
+[ ] 2) det (A*) N# [PN V# (det) (A*) N'] V#
+[ ] 3) det (A*) N# [PN (det) (A*) N' V'] V#
 
-Embedded + PP:
-1.1) det N# {P (det) N'} [PN V#] V#
-1.2) det N# {P (det) N'} [PN V'] V#
-2.1) det N# {P (det) N'} [PN V# (det) N] V#
-2.2) det N# {P (det) N'} [PN V' (det) N] V#
-3.1) det N# {P (det) N'} [PN (det) N" V"] V#
-3.2) det N# {P (det) N'} [PN (det) N" V"] V'
-
+Embedded + PP + RC:
+[ ] 1.1) det N# {P (det) N'} [PN V#] V#
+[ ] 1.2) det N# {P (det) N'} [PN V'] V#
+[ ] 2.1) det N# {P (det) N'} [PN V# (det) N] V#
+[ ] 2.2) det N# {P (det) N'} [PN V' (det) N] V#
+[ ] 3.1) det N# {P (det) N'} [PN (det) N" V"] V#
+[ ] 3.2) det N# {P (det) N'} [PN (det) N" V"] V'

@@ -1,2 +1,0 @@
-table, chair, shirt, hat
-tables, chairs, shirts, hats

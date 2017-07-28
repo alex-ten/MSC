@@ -1,2 +1,0 @@
-sees,hears,plays,believes
-see,hear,play,believe

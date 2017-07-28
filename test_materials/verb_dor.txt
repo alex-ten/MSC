@@ -1,2 +1,0 @@
-has,likes,sends,calls
-have,like,send,call

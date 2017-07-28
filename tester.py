@@ -83,7 +83,7 @@ def main(_):
                                   name="TestInput")
 
             with tf.variable_scope("Model"):
-                mtest = Basic_RNN_Model(is_training=False, config=config, input_=test_input)
+                mtest = Basic_LSTM_Model(is_training=False, config=config, input_=test_input)
 
             saver = tf.train.Saver(write_version=tf.train.SaverDef.V2)
             saved_files = os.listdir(model_path)
